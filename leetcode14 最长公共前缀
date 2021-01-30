@@ -1,0 +1,89 @@
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例:
+输入: ["flower","flow","flight"]
+输出: "fl"
+
+代码示意：
+一、横向扫描：从前往后依次比较字符串，获取最长公共前缀
+时间复杂度：O（mn） m-字符串平均长度（字符数） n-字符串数目 空间复杂度O（1）
+var longestCommonPrefix = function(strs) {
+    if(strs.length<2) return strs.join();
+    let ans = strs.reduce((prev,str)=>{
+        let i=0;
+        for(;i<prev.length && i<str.length;i++){
+            if(prev.charAt(i)!==str.charAt(i)) prev = prev.substring(0,i);
+        }
+        prev = prev.substring(0,i);
+        return prev;
+    })
+    return ans;  
+}
+二、纵向扫描：将字符串一个个的竖向排列，按照字符一列列的比较，直至不相同，返回前n列表示的最长公共前缀
+时间复杂度：O（mn） 空间复杂度O（1）
+var longestCommonPrefix = function(strs) {
+    if(strs.length<2) return strs.join();
+    let prev = strs[0];
+    for(let i=1;i<strs.length;i++){
+        let j=0;
+        for(;j<prev.length && j<strs[i].length;j++){
+            if(prev.charAt(j)!==strs[i].charAt(j)){
+                prev = prev.substring(0,j);
+            }
+        }
+        prev = prev.substring(0,j);
+    }
+    return prev;
+}
+三、分治思想：lcp（str1,str2...strn）=lcp(lcp(str1,str2...strk),lcp(strk+1,...strn))
+时间复杂度O（mn） 空间复杂度O（mlogn）
+var longestCommonPrefix = function(strs) {
+    if(strs.length<2) return strs.join();
+    let prefix = lcp(strs,0,strs.length-1);
+    return prefix;  
+}
+
+var lcp = function(strs,start,end){
+    if(start === end) return strs[start];
+    let mid = start + Math.floor((end-start)/2);
+    let left_common = lcp(strs,start,mid);
+    let right_common= lcp(strs,mid+1,end);
+    let common,i=0;
+    for(;i<left_common.length && i< right_common.length;i++){
+        if(left_common.charAt(i)!==right_common.charAt(i)){
+            common =  left_common.substring(0,i);
+            break;
+        }       
+    }
+    common =  left_common.substring(0,i);
+    return common;
+}
+四、双指针：最长公共前缀的长度一定小于等于最短字符串长度  取最短长度的中间mid来匹配前0~mid的字符 全部匹配 则扩大匹配范围 否则缩小匹配范围
+时间复杂度O（mnlogm） 空间复杂度O（1）
+
+
+
+
+
+五、排序+比较最大最小字符串:遍历一次数组得到最大最小字符串 两者的最长公共前缀就是所有字符串的公共前缀   --> 性能表现最好 时间效率高 空间复杂度与其他相差甚微
+时间复杂度：O（n+m） 空间复杂度：O（1）
+var longestCommonPrefix = function(strs) {
+   if(strs.length<2) return strs.join();
+   let minStr = strs[0],maxStr=strs[0];
+   for(const str of strs){
+       minStr = str < minStr? str : minStr;
+    //    minStr = Math.min(minStr,str);——>null  注意Math.min Math.max 不适用于字符串值大小的比较
+       maxStr = str > maxStr? str : maxStr;
+   }
+   for(let i=0;i<minStr.length;i++){
+       if(minStr.charAt(i)!==maxStr.charAt(i)){
+           return minStr.substring(0,i);
+       }
+   }
+   return minStr;
+}
+六、字典树
+
+
