@@ -30,7 +30,7 @@ var reverseWords = function(s) {
              deque.unshift(word);
              word='';
          }else if(char!==' '){//注意这里 排除空格加入word
-             word += s.charAt(left);
+             word += char;
          }
          left++;
     }
