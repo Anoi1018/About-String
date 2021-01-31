@@ -1,0 +1,63 @@
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+说明：本题中，我们将空字符串定义为有效的回文串。
+
+示例 1:
+输入: "A man, a plan, a canal: Panama"
+输出: true
+
+代码示意：
+一、正则表达式+双指针夹逼
+var isPalindrome = function(s) {
+    if(s.length<2) return true;
+    //1.先对字符串进行处理 去除非字母非数字部分 字母都转化为小写
+
+    // 1.1 \W -->注意是大写 匹配非数字非字母非下划线
+    // let str = s.replace(/(\W|_)/g, '').toLowerCase();
+    
+    //1.2 ^可以理解为不是  在[]内部 注意这里 生成新的字符串 用str承接
+    //let str = s.replace(/[^a-z0-9]/ig,'').toLocaleLowerCase();
+    
+    //1.3 match方法返回的是 匹配到的所有子串组成的数组
+    //需要先去除不合格字符再转化大小写 不然对不合格字符进行大小写转化会报错
+    let strArr  = s.match(/[a-zA-Z0-9]+/g);
+    if(!strArr) return true;
+    let str = strArr.join("").toLowerCase();
+
+    //2.双指针夹逼判断是否回文  --> 可用API 
+    //return str.split("").reverse().join("") === str;
+    let left=0,right=str.length-1;
+    while(left<right){
+        if(str[left]!==str[right]) return false;
+        left++;
+        right--;
+    }
+    return true;
+};
+
+二、不用正则表达式
+var isPalindrome = function(s) {
+    if(s.length<2) return true;
+    let left = 0,right=s.length-1;
+    let str = s.toLowerCase(); //注意大小写转化
+    while(left<right){
+        if(!isValid(str[left])){ //跳过不合法字符
+            left++;
+            continue;
+        } 
+        if(!isValid(str[right])){
+            right--;
+            continue;
+        } 
+        if(str[left]!==str[right]) return false;
+        left++;right--;
+    }
+    return true; 
+};
+var isValid = function(char){
+    let bool = false;
+if((char>='a'&&char<='z')||(char>='A'&&char<='Z')||(char>='0'&&char<='9')){ //注意都有单引号 ''表示字符
+        bool = true;
+    }
+    return bool;
+}
