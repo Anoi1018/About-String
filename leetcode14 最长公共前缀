@@ -60,14 +60,41 @@ var lcp = function(strs,start,end){
     common =  left_common.substring(0,i);
     return common;
 }
-四、双指针：最长公共前缀的长度一定小于等于最短字符串长度  取最短长度的中间mid来匹配前0~mid的字符 全部匹配 则扩大匹配范围 否则缩小匹配范围
+四、双指针：最长公共前缀的长度一定小于等于最短字符串长度  取最短长度的中间mid来匹配前0~mid的字符 全部匹配 则扩大匹配范围 否则缩小匹配范围 -->性能表现最好  时间复杂度第二低 空间复杂度最低
 时间复杂度O（mnlogm） 空间复杂度O（1）
+var longestCommonPrefix = function(strs) {
+   if(strs.length<2) return strs.join();
+   let minLen = strs[0].length;
+   for(const str of strs){
+       minLen = Math.min(minLen,str.length);
+   }
+   let left=0,right=minLen-1,mid;
+   while(left <= right){
+       mid = left + Math.floor((right-left)/2);
+       if(isCommonPrefix(strs,mid)){
+           left = mid+1;
+       }else {
+           right = mid-1;
+       }
+   }
+   return strs[0].substring(0,left);
+}
+var isCommonPrefix = function(strs,len){
+    let prev = strs[0];
+    for(let i=1;i<strs.length;i++){
+        for(let j=0;j<=len;j++){
+            if(prev.charAt(j)!==strs[i].charAt(j)){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 
 
 
-
-五、排序+比较最大最小字符串:遍历一次数组得到最大最小字符串 两者的最长公共前缀就是所有字符串的公共前缀   --> 性能表现最好 时间效率高 空间复杂度与其他相差甚微
+五、排序+比较最大最小字符串:遍历一次数组得到最大最小字符串 两者的最长公共前缀就是所有字符串的公共前缀   -->  性能表现次之 时间复杂度最低
 时间复杂度：O（n+m） 空间复杂度：O（1）
 var longestCommonPrefix = function(strs) {
    if(strs.length<2) return strs.join();
@@ -85,5 +112,49 @@ var longestCommonPrefix = function(strs) {
    return minStr;
 }
 六、字典树
-
+时间复杂度O（s+m） 空间复杂度O（s）-->s表示所有字符数目 m表示最长公共前缀的长度
+var longestCommonPrefix = function(strs) {
+   if(strs.length<2) return strs.join();
+   let trie = new Trie();
+   for(const str of strs){
+       if(!trie.insert(str)) return "";
+   }
+   return trie.searchLPC();
+}
+//构造 字典树节点 节点只包含两部分next、isEnd 字符的值作为节点的key
+var TrieNode = function(){
+    this.next = {}; //子节点集合
+    this.isEnd = false; //当前节点是否是某一字符串的末尾字符
+}
+//构造 字典树
+var Trie = function(){
+    this.root = new TrieNode();
+}
+//为字典树原型上添加方法
+Trie.prototype.insert=function(word){
+    if(!word) return false;
+    let node = this.root;
+    for(let i in word){
+        if(!node.next[word[i]]){
+            node.next[word[i]] = new TrieNode();
+        }
+        node = node.next[word[i]];
+    }
+    node.isEnd = true;
+    return true;
+}
+Trie.prototype.searchLPC = function(){
+    let node = this.root,prev = '';
+    while(node.next){
+        let keys = Object.keys(node.next);
+        if(keys.length!==1) break;
+        if(node.next[keys[0]].isEnd){
+            prev += keys[0];
+            break;
+        }
+        prev += keys[0];
+        node = node.next[keys[0]];
+    }
+    return prev;
+}
 
