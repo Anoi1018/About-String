@@ -1,0 +1,66 @@
+给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+
+示例 1:
+输入: "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+
+示例 2:
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+
+请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+
+代码示意：
+一、滑动窗口--用数组维护
+时间复杂度O（n^2） 空间复杂度O（n）
+var lengthOfLongestSubstring = function(s) {
+    if(s.length<2) return s.length;
+    //模式识别：最长子串-->滑动窗口
+    //滑动窗口 -->用array来维护
+    //遍历字符串s 将没遇到过的字符压入array 否则将窗口内重复元素及其前面的字符删除
+    //在这个过程中  用当前滑动窗口内子串的长度 不断地更新max
+    let arr=[],char,index,max_len=0;
+    for(let i=0;i<s.length;i++){
+        char = s.charAt(i);
+        index = arr.indexOf(char); //时间复杂度O（n）
+        if(index === -1){
+            arr.push(char);
+        }else {
+            arr.splice(0,index+1); //时间复杂度O（n）
+            arr.push(char);
+        }
+        max_len = Math.max(max_len,arr.length);
+    }
+    return max_len; 
+};
+二、滑动窗口--用字符串下标维护
+时间复杂度O（n^2） 空间复杂度O（1）
+var lengthOfLongestSubstring = function(s) {
+    if(s.length<2) return s.length;
+  
+    let index=0,max_len=0;
+    for(let left=0,right=0;right<=s.length-1;right++){
+        index = s.substring(left,right).indexOf(s.charAt(right)); //字符串也可用indexOf（）
+        if(index !==-1){
+            left = left + index+1; //注意这里  在原先left的基础上再加index+1
+        }
+        max_len = Math.max(max_len,right-left+1);
+    }    
+    return max_len; 
+};
+三、滑动窗口--用map来标记字符的下标 实现滑动窗口左边界的更新
+h时间复杂度O（n） 空间复杂度O（n）
+var lengthOfLongestSubstring = function(s) {
+    if(s.length<2) return s.length;
+    let map = new Map(),i=0,max=0;
+    for(let j=0;j<s.length;j++){
+        if(map.has(s[j])){
+            i = Math.max(map.get(s[j]) + 1,i);
+        }
+        map.set(s[j],j);
+        max = Math.max(max,j-i+1);
+    } 
+    return max;
+};
