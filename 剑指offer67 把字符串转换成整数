@@ -1,0 +1,24 @@
+
+代码示意：
+var strToInt = function(str) {
+    if(str.replace(/\s+/g,"") === '') return 0; //首先排除掉 只有空格的字符串
+    let i=0,ansStr='';
+    while(i<str.length){
+        while(str[i]===' ') i++; //排除掉第一个非空字符前的空格
+        if(str[i]==='+' || str[i]==='-' || (str[i]>='0'&&str[i]<='9')){ //第一个合理字符的三种情况
+            ansStr = ansStr + str[i++];
+            while(i<str.length && str[i]>='0'&& str[i]<='9'){ //从第二个合理字符开始匹配尽可能多的数字
+                ansStr += str[i++];
+            }
+            if(ansStr==='+' || ansStr==='-') return 0; //如果是只有正负号的字符串
+            let ansInt = parseInt(ansStr);
+            let INT_MIN=-Math.pow(2,31),INT_MAX=Math.pow(2,31)-1;
+            if(ansInt<INT_MIN) return INT_MIN;
+            if(ansInt>INT_MAX) return INT_MAX;
+            return ansInt;
+        }else {
+            return 0;
+        }
+    }
+
+};
