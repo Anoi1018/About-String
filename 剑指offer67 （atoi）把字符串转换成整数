@@ -25,7 +25,6 @@ var strToInt = function(str) {
 };
 二、实用parseInt
 题目的主要规则可以概况为：
-
 忽略开头空格
 忽略整数部分后的字符
 返回有符号整数
@@ -33,25 +32,16 @@ var strToInt = function(str) {
 函数不能进行有效的转换时，请返回 0
 
 所有的条件 parseInt 都满足，除了
-
 范围在 32 位内（含）
 函数不能进行有效的转换：parseInt 返回的是 NaN
 
 代码实现：
-
-const myAtoi = function(s) {
-    // parseInt
-    const number = parseInt(s);
-    
-    // 判断 parseInt 的结果是否为 NaN，是则返回 0
-    if(isNaN(number)) {
-        return 0;
-    } else if (number < Math.pow(-2, 31) || number > Math.pow(2, 31) - 1) {
-        // 超出
-        return number < Math.pow(-2, 31) ? Math.pow(-2, 31) : Math.pow(2, 31) - 1;
-    } else {
-        return number;
-    }
-}
-
+var strToInt = function(str) {
+    let ansInt = parseInt(str);
+    if(isNaN(ansInt)) return 0;
+    let INT_MIN = -Math.pow(2,31),INT_MAX=Math.pow(2,31)-1;
+    if(ansInt<INT_MIN) return INT_MIN;
+    if(ansInt>INT_MAX) return INT_MAX;
+    return ansInt;
+};
 
